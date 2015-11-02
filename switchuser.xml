@@ -1,24 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension version="1.6" type="plugin" group="system">
-	<name>PLG_SYSTEM_SWITCHUSER</name>
+<extension version="3.1" type="plugin" group="system" method="upgrade">
+	<name>System - Switch User</name>
+	<creationDate>October 2015</creationDate>
 	<author>Artd Webdesign</author>
-	<creationDate>May 2011</creationDate>
-	<copyright>Copyright (C) Artd Webdesign GmbH. All rights reserved.</copyright>
-	<license>http://www.gnu.org/licenseses/gpl-2.0.html GNU/GPL</license>
 	<authorEmail>lu@artd.ch</authorEmail>
 	<authorUrl>www.artd.ch</authorUrl>
-	<version>1.0.1</version>
+	<copyright>Copyright (C) Artd Webdesign GmbH. All rights reserved.</copyright>
+	<license>http://www.gnu.org/licenseses/gpl-2.0.html GNU/GPL</license>
+	<version>3.0.1</version>
 	<description>PLG_SYSTEM_SWITCHUSER_XML_DESCRIPTION</description>
 
 	<files>
 		<filename plugin="switchuser">switchuser.php</filename>
-		<filename>index.html</filename>
-		<folder>images</folder>
+		<folder>switchuser</folder>
 	</files>
 	<languages folder="language">
 		<language tag="en-GB">en-GB/en-GB.plg_system_switchuser.ini</language>
-		<language tag="en-GB">en-GB/en-GB.plg_system_switchuser.sys.ini</language>
 		<language tag="de-DE">de-DE/de-DE.plg_system_switchuser.ini</language>
-		<language tag="de-DE">de-DE/de-DE.plg_system_switchuser.sys.ini</language>
 	</languages>
 </extension>
