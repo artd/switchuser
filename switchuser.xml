@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension version="3.1" type="plugin" group="system" method="upgrade">
 	<name>System - Switch User</name>
-	<creationDate>October 2015</creationDate>
-	<author>Artd Webdesign</author>
-	<authorEmail>lu@artd.ch</authorEmail>
-	<authorUrl>www.artd.ch</authorUrl>
+	<creationDate>November 2017</creationDate>
+	<author>artd webdesign</author>
+	<authorEmail>artd@artd.ch</authorEmail>
+	<authorUrl>artd.ch</authorUrl>
 	<copyright>Copyright (C) Artd Webdesign GmbH. All rights reserved.</copyright>
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
-	<version>3.0.1</version>
+	<version>3.0.2</version>
 	<description>PLG_SYSTEM_SWITCHUSER_XML_DESCRIPTION</description>
 
 	<files>

@@ -22,7 +22,7 @@ class plgSystemSwitchUser extends JPlugin
 	
 	function onAfterDispatch()
 	{
-		$app =& JFactory::getApplication();
+		$app = JFactory::getApplication();
 		$option = JRequest::getCmd('option', '');
 		$task = JRequest::getCmd('view', $option == 'com_users' ? 'view' : '');
 		
