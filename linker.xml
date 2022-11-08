@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Usage - run  phing -f linker.xml -Dp=/var/www/je -->
+
+<project name="linker" default="link" basedir=".">
+    <property name="URI.base" value="./"/>
+    <resolvepath propertyName="URI.base" file="${URI.base}"/>
+    <property name="p" value="" />
+    <property name="plugin" value="switchuser"/>
+    <property name="rootPath" value="${URI.base}"/>
+
+    <target name="link" description="Build symbolic links to the git version ">
+
+        <echo>Current Path: ${rootPath}</echo>
+        <echo>Target Path: ${p}</echo>
+
+        <phingcall target="deleteall"/>
+
+        <!-- Create System Links -->
+        <phingcall target="symdir">
+            <property name="target" value="${rootPath}"/><property name="link" value="${p}/plugins/system/${plugin}"/>
+        </phingcall>
+
+        <!-- Language System Links -->
+        <phingcall target="symfile">
+            <property name="target" value="${rootPath}/language/en-GB/en-GB.plg_system_${plugin}.ini"/><property name="link" value="${p}/administrator/language/en-GB/en-GB.plg_system_${plugin}.ini"/>
+        </phingcall>
+        <phingcall target="symfile">
+            <property name="target" value="${rootPath}/language/en-GB/en-GB.plg_system_${plugin}.sys.ini"/><property name="link" value="${p}/administrator/language/en-GB/en-GB.plg_system_${plugin}.sys.ini"/>
+        </phingcall>
+
+   </target>
+
+   <target name="deleteall">
+        <!-- Delete folders, but don't worry if it fails as it could be a symbolic link -->
+
+        <!-- Remove the symbolic links or existing directory structures -->
+         <if> <!-- First test if the dir or symlink even exists -->
+            <available file="${p}/plugins/system/${plugin}/" />
+            <then>
+                <if> <!-- It does so delete based on type -->
+                    <available file="${p}/plugins/system/${plugin}/" type="dir" />
+                    <then>
+                        <delete dir="${p}/plugins/system/${plugin}/" verbose="true" failonerror="false" />
+                     </then>
+                     <else>   
+                        <delete file="${p}/plugins/system/${plugin}/" verbose="true" failonerror="false" />
+                    </else>
+                </if>
+            </then>
+        </if>
+
+        <!-- Delete language files -->
+        <delete file="${p}/administrator/language/en-GB/en-GB.plg_system_${plugin}.ini" verbose="true" failonerror="false" />
+        <delete file="${p}/administrator/language/en-GB/en-GB.plg_system_${plugin}.sys.ini" verbose="true" failonerror="false" />
+   </target>
+
+    <target name="symdir">
+        <echo msg="Link is ${link}"/>
+        <symlink target="${target}" link="${link}" overwrite="true" />
+    </target>
+
+    <target name="symfile">
+        <symlink target="${target}" link="${link}"  overwrite="true" />
+   </target>
+
+    <target name="unlink" description="restore the component from git so no symlinks exist">
+        <echo>Current Path: ${rootPath}</echo>
+        <echo>Target Path: ${p}</echo>
+
+        <phingcall target="deleteall"/>
+ 
+         <!-- Copy the git dir/files to their original locations -->
+        <!-- Admin component -->
+         <!-- system plugin -->
+        <phingcall target="copydir"><property name="to" value="${p}/plugins/system/${plugin}/"/><property name="from" value="${rootPath}/"/></phingcall>
+
+        <!-- The language files -->
+        <phingcall target="copyfile">
+            <property name="to" value="${p}/administrator/language/en-GB/"/> <property name="from" value="${rootPath}/language/en-GB/"/><property name="name" value="en-GB.plg_system_${plugin}.ini"/>
+        </phingcall>
+        <phingcall target="copyfile">
+            <property name="to" value="${p}/administrator/language/en-GB/"/> <property name="from" value="${rootPath}/language/en-GB/"/><property name="name" value="en-GB.plg_system_${plugin}.sys.ini"/>
+        </phingcall>
+
+    </target>
+
+    <target name="copydir">
+         <copy todir="${to}">
+           <fileset dir="${from}">
+                <include name="**"></include>
+                <exclude name="**/.svn/**"></exclude>
+                <exclude name="**/*.zip"></exclude>
+            </fileset>
+        </copy>
+        <echo msg="to is ${to}" />
+     </target>
+
+    <target name="copyfile">
+        <copy file="${from}${name}" todir="${to}" overwrite="true" />
+    </target>
+     
+</project>
