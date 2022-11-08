@@ -19,6 +19,7 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Utility\Utility;
 use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\Session\Session;
+use Joomla\CMS\Application\ApplicationHelper;
 
 
 class plgSystemSwitchUser extends CMSPlugin
@@ -91,9 +92,8 @@ class plgSystemSwitchUser extends CMSPlugin
 			$app->enqueueMessage(Text::_('SWITCHUSER_YOU_HAVE_LOGIN_LOGOUT_FIRST'), 'error');
 			return $app->redirect('index.php');
 		}
-echo "Hash is: ".JApplication::getHash('administrator')."<br>";
-echo "MD% is: ".md5(JApplication::getHash('administrator'))."<br>";		
-		$backendSessionId = $app->input->get(md5(JApplication::getHash('administrator')), null ,"COOKIE");
+
+		$backendSessionId = $app->input->cookie->get(md5(ApplicationHelper::getHash('administrator')));
 
 		$query 
 			->select('userid')
@@ -102,7 +102,7 @@ echo "MD% is: ".md5(JApplication::getHash('administrator'))."<br>";
 			->where('client_id = 1')
 			->where('guest = 0');
 		$db->setQuery($query);
-echo "DB User ID is: ".$db->loadResult()."<br>"; die;
+
 		if (empty($backendUserId = $db->loadResult())) {
 			$app->enqueueMessage(Text::_('SWITCHUSER_BACKEND_USER_SESSION_EXPIRED'), 'error');
 			return $app->redirect('index.php');
@@ -122,48 +122,13 @@ echo "DB User ID is: ".$db->loadResult()."<br>"; die;
 			$app->redirect('index.php');
 			return;
 		}
-
-		// Get an ACL object
-		$acl = Factory::getACL();
-
-		// Get the user group from the ACL
-		if ($instance->get('tmp_user') == 1) {
-			$grp = new CMSObject;
-			// This should be configurable at some point
-			$grp->set('name', 'Registered');
-		} else {
-			//$grp = $acl->getAroGroup($instance->get('id'));
-		}
-
-		//Authorise the user based on the group information
-		if(!isset($options['group'])) {
-			$options['group'] = 'USERS';
-		}
-
-		//Mark the user as logged in
-		$instance->set( 'guest', 0);
-		$instance->set('aid', 1);
-
-		//Set the usertype based on the ACL group name
-		$instance->set('usertype', $grp->name);
+		// Hit the user last visit field
+		$instance->setLastVisit();
 
 		// Register the needed session variables
 		$session = Factory::getSession();
 		$session->set('user', $instance);
 
-		// Get the session object
-		$table = Table::getInstance('session');
-		$table->load( $session->getId() );
-
-		$table->guest 		= $instance->get('guest');
-		$table->username 	= $instance->get('username');
-		$table->userid 		= intval($instance->get('id'));
-		$table->usertype 	= $instance->get('usertype');
-
-		$table->update();
-
-		// Hit the user last visit field
-		$instance->setLastVisit();
 		$app->enqueueMessage(sprintf(Text::_('SWITCHUSER_YOU_HAVE_LOGIN_SUCCESSFULLY'), Factory::getUser($instance->get('id'))->name), 'info');
 		$app->redirect('index.php');
 	}
